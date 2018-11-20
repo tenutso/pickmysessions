@@ -12,7 +12,7 @@
             <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/#/admin/experts">Experts</a>
+            <a class="nav-link" href="/#/admin/roundtable/list">Roundtable</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/#/admin/reports">Reports</a>
