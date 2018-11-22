@@ -23,7 +23,7 @@
 <script>
 import { db, firebase } from "../../firebaseConfig.js";
 export default {
-  name: "RoundTableCreate",
+  name: "RoundTableEdit",
   data: function() {
     return {
       form: {
@@ -33,6 +33,16 @@ export default {
       }
     };
   },
+  created: async function() {
+    const roundTableCol = await db
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("roundtables")
+      .doc(this.$route.params.id)
+      .get()
+    this.form = roundTableCol.data()
+    console.log('Edit RoundTable: ', this.form)
+  },
   methods: {
     onSubmit: async function(evt) {
       evt.preventDefault();
@@ -41,7 +51,8 @@ export default {
         .collection("users")
         .doc(user.uid)
         .collection("roundtables")
-        .add({
+        .doc(this.$route.params.id)
+        .set({
           name: this.form.name,
           rounds: this.form.rounds,
           seats: this.form.seats

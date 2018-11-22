@@ -1,10 +1,15 @@
 <template>
-<b-table :fields="fields" :items="roundtables">
-  <template slot="edit" slot-scope="data">
-    <a :href="'/#/admin/roundtable/edit/' + data.item.id">Edit</a>
-  </template>
-</b-table>
-
+  <div class="row">
+    <div class="container">
+      <btn class="btn btn-sm btn-outline-secondary" @click="$router.push('/admin/roundtable/create')">Add New</btn>
+      <br><br>
+      <b-table :fields="fields" :items="roundtables">
+        <template slot="edit" slot-scope="data">
+          <b-btn class="btn btn-sm btn-outline-success" @click="editTable(data.item.id)">Edit</b-btn>
+        </template>
+      </b-table>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -15,7 +20,15 @@ export default {
     return {
       roundtables: [],
       currentUser: '',
-      fields: ['name', 'edit']
+      fields: [
+        'name',
+        {
+          'edit': {
+          label: '',
+          hidden: true
+          }
+        }
+      ]
     }
   },
   created: async function() {
@@ -29,6 +42,11 @@ export default {
     })
     console.log(this.roundtables)
   },
+  methods: {
+    editTable: function (roundtableId) {
+      this.$router.push('edit/' + roundtableId)
+    }
+  }
 }
 </script>
 

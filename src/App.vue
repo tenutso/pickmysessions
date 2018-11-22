@@ -1,21 +1,22 @@
 <template>
   <div id="#app">
-    <component :is="layout">
-      <router-view></router-view>
-    </component>
+    <div class="container">
+      <admin-header></admin-header>
+        <router-view></router-view>
+      <admin-footer></admin-footer>
+    </div>
   </div>
 </template>
 
 <script>
-const defaultLayout = 'main'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 export default {
   name: 'app',
-  computed: {
-    layout () {
-      return (this.$route.meta.layout || defaultLayout) + '-layout'
-    }
+  components: {
+    AdminHeader: Header,
+    AdminFooter: Footer
   }
-
 }
 </script>
 

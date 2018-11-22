@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 import Admin from '@/components/Admin'
 import SignIn from '@/components/SignIn'
 import RoundTableCreate from '@/components/RoundTable/RoundTableCreate'
+import RoundTableEdit from '@/components/RoundTable/RoundTableEdit'
 import RoundTableList from '@/components/RoundTable/RoundTableList'
 
 Vue.use(Router)
@@ -25,8 +26,7 @@ export default new Router({
       name: 'Admin',
       component: Admin,
       meta: {
-        requiresAuth: true,
-        layout: 'admin'
+        requiresAuth: true
       }
     },
     {
@@ -34,8 +34,15 @@ export default new Router({
       name: 'RoundTableCreate',
       component: RoundTableCreate,
       meta: {
-        requiresAuth: true,
-        layout: 'admin'
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/admin/roundtable/edit/:id',
+      name: 'RoundTableEdit',
+      component: RoundTableEdit,
+      meta: {
+        requiresAuth: true
       }
     },
     {
@@ -43,8 +50,7 @@ export default new Router({
       name: 'RoundTableList',
       component: RoundTableList,
       meta: {
-        requiresAuth: true,
-        layout: 'admin'
+        requiresAuth: true
       }
     }
   ]

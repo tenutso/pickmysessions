@@ -8,13 +8,6 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import VueFire from 'vuefire'
-import AdminLayout from './layouts/Admin'
-import MainLayout from './layouts/Main'
-
-Vue.use(VueFire)
-Vue.component('admin-layout', AdminLayout)
-Vue.component('main-layout', MainLayout)
 
 let currentUser = ''
 firebase.auth().onAuthStateChanged((user) => {
