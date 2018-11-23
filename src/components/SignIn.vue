@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import firebase from 'firebase/app'
+import { db, firebase } from '@/firebaseConfig.js'
 export default {
   name: 'SignIn',
   data: function() {

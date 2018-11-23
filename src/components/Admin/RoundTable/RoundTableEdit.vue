@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { db, firebase } from "../../firebaseConfig.js";
+import { db, firebase } from "@/firebaseConfig.js"
 export default {
   name: "RoundTableEdit",
   data: function() {

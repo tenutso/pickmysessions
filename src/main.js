@@ -15,6 +15,7 @@ firebase.auth().onAuthStateChanged((user) => {
     currentUser = user
   }
 })
+/*
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   if (requiresAuth && !currentUser) {
@@ -24,7 +25,7 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
-
+*/
 Vue.use(BootstrapVue);
 
 Vue.config.productionTip = false

@@ -2,7 +2,7 @@
   <div class="row">
     <div class="container">
       
-      <btn class="btn btn-sm btn-outline-secondary" @click="$router.push('/admin/roundtable/create')">Add New</btn>
+      <b-button class="btn btn-sm btn-outline-secondary" @click="$router.push('/admin/roundtable/create')">Add New</b-button>
       <br><br>
       <div v-if="roundtables.length" > 
         <b-table :fields="fields" :items="roundtables">
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { db, firebase } from '../../firebaseConfig.js'
+import { db, firebase } from "@/firebaseConfig.js"
 export default {
   name: 'RoundTableList',
   data: function() {
