@@ -35,9 +35,9 @@ export default {
   },
   created: async function() {
     const roundTableCol = await db
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
       .collection("roundtables")
+      .doc('users')
+      .collection(firebase.auth().currentUser.uid)
       .doc(this.$route.params.id)
       .get()
     this.form = roundTableCol.data()

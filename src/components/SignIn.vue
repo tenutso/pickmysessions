@@ -45,18 +45,21 @@ export default {
   beforeCreate: function() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        alert('You are already logged in')
         this.$router.push('/admin')
-        console.log(user)
+        // console.log(user)
       }
     })
   },
   methods: {
     onSubmit: function (evt) {
+      evt.preventDefault()
       firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password).catch(function(error) {
       // Handle Errors here.
       console.log(error)
       var errorCode = error.code;
       var errorMessage = error.message;
+      alert(errorMessage)
       // ...
       });
     }
