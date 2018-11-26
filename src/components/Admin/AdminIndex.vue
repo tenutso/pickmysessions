@@ -1,8 +1,14 @@
 <template>
-  <div>
-    <admin-header></admin-header>
-    <admin-footer></admin-footer>
-  </div>
+<v-app>
+  <v-navigation-drawer app></v-navigation-drawer>
+  <v-toolbar app></v-toolbar>
+  <v-content>
+    <v-container fluid>
+      <router-view></router-view>
+    </v-container>
+  </v-content>
+  <v-footer app></v-footer>
+</v-app>
 </template>
 
 <script>
@@ -14,15 +20,6 @@ export default {
     AdminHeader,
     AdminFooter
   },
-  data () {
-    return {
-      msg: 'Welcome to Your Vue.js App'
-    }
-  }
+
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>

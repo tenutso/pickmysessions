@@ -1,6 +1,5 @@
 <template>
   <div>
-    <admin-header></admin-header>
     <b-form @submit="onSubmit">
       <b-form-group
         id="nameInputGroup"
@@ -19,24 +18,17 @@
       <b-btn class="btn btn-sm btn-primary" type="submit" variant="primary">Save</b-btn>
       <b-btn
         class="btn btn-sm btn-outline-primary"
-        @click="$router.push('/admin/roundtable/list')"
+        @click="$router.push('/admin/roundtables')"
         variant="primary"
       >Cancel</b-btn>
     </b-form>
-    <admin-footer></admin-footer>
   </div>
 </template>
 
 <script>
 import { db, firebase } from "@/firebaseConfig.js"
-import AdminHeader from '../AdminHeader'
-import AdminFooter from '../AdminFooter'
 export default {
   name: "RoundTableCreate",
-  components: {
-    AdminHeader,
-    AdminFooter
-  },
   data: function() {
     return {
       form: {

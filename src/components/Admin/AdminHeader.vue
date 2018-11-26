@@ -9,7 +9,7 @@
                         <a class="nav-link" href="">home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/#/admin/roundtable/list">RoundTables</a>
+                        <a class="nav-link" href="/#/admin/roundtables">RoundTables</a>
                     </li>
                 </ul>
                 <user-logged-in></user-logged-in>

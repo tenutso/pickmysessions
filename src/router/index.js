@@ -30,31 +30,41 @@ export default new Router({
       name: 'AdminIndex',
       meta: {
         requiresAuth: true
-      }
-    },
-    {
-      path: '/admin/roundtable/create',
-      name: 'RoundTableCreate',
-      component: RoundTableCreate,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/admin/roundtable/edit/:id',
-      name: 'RoundTableEdit',
-      component: RoundTableEdit,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/admin/roundtable/list',
-      name: 'RoundTableList',
-      component: RoundTableList,
-      meta: {
-        requiresAuth: true
-      }
+      },
+      children: [
+        {
+          path: 'roundtables',
+          name: 'RoundTableList',
+          component: RoundTableList,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'roundtables/edit/:id',
+          name: 'RoundTableEdit',
+          component: RoundTableEdit,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'roundtables/create',
+          name: 'RoundTableCreate',
+          component: RoundTableCreate,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'roundtables/:id/experts',
+          name: 'ExpertList',
+          component: ExpertList,
+          meta: {
+            requiresAuth: true
+          }
+        }
+      ]
     },
 
     // Manage Experts
@@ -70,14 +80,6 @@ export default new Router({
       path: '/admin/roundtable/:rid/experts/edit/:eid',
       name: 'ExpertEdit',
       component: ExpertEdit,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/admin/roundtable/:id/experts',
-      name: 'ExpertList',
-      component: ExpertList,
       meta: {
         requiresAuth: true
       }

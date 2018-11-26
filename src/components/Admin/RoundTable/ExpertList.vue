@@ -1,6 +1,5 @@
 <template>
   <div>
-    <admin-header></admin-header>
     <div class="row">
       <div class="container">
         <b-button class="btn btn-sm btn-secondary" @click="$router.push('/admin/roundtable/' + $route.params.id + '/experts/create')">Add New</b-button>
@@ -18,25 +17,19 @@
         </div>
       </div>
     </div>
-    <admin-footer></admin-footer>
   </div>
 </template>
 
 <script>
-import AdminHeader from "../AdminHeader";
-import AdminFooter from "../AdminFooter";
-import { db } from "@/firebaseConfig.js";
+
+import { db, firebase } from "@/firebaseConfig.js";
 
 export default {
   name: "RoundTableList",
-  components: {
-    AdminHeader,
-    AdminFooter
-  },
   data: function() {
     return {
       experts: [],
-      currentUser: "",
+      userId: "",
       fields: [
         "firstname",
         "lastname",
@@ -50,10 +43,11 @@ export default {
     };
   },
   firestore: function() {
+    this.userId = firebase.auth().currentUser.uid
     return {
       experts: db
         .collection("users")
-        .doc(this.$store.state.currentUser.uid)
+        .doc(this.userId)
         .collection("roundtables")
         .doc(this.$route.params.id)
         .collection("experts")

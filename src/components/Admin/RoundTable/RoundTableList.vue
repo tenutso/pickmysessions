@@ -1,9 +1,8 @@
 <template>
 <div>
-  <admin-header></admin-header>
   <div class="row">
     <div class="container">
-      <b-button class="btn btn-sm btn-secondary" @click="$router.push('/admin/roundtable/create')">Add New</b-button>
+      <b-button class="btn btn-sm btn-secondary" @click="$router.push('/admin/roundtables/create')">Add New</b-button>
       <br><br>
       <div v-if="roundtables.length">
         <b-table :fields="fields" :items="roundtables">
@@ -19,27 +18,20 @@
       </div>
     </div>
   </div>
-  <admin-footer></admin-footer>
 </div>
 </template>
 
 <script>
-import AdminHeader from "../AdminHeader";
-import AdminFooter from "../AdminFooter";
 import {
-  db
+  db, firebase
 } from "@/firebaseConfig.js";
 
 export default {
   name: "RoundTableList",
-  components: {
-    AdminHeader,
-    AdminFooter
-  },
   data: function () {
     return {
       roundtables: [],
-      currentUser: "",
+      userId: "",
       fields: [
         "name",
         {
@@ -52,20 +44,21 @@ export default {
     };
   },
   firestore: function () {
-    console.log(this.$store.state)
+    this.userId = firebase.auth().currentUser.uid
+    console.log(this.userId)
     return {
       roundtables: db
         .collection("users")
-        .doc(this.$store.state.currentUser.uid)
-        .collection("roundtables"),
+        .doc(this.userId)
+        .collection("roundtables")
     }
   },
   methods: {
     editRoundtable: function (roundtable) {
-      this.$router.push("edit/" + roundtable.id)
+      this.$router.replace("roundtables/edit/" + roundtable.id)
     },
     listExperts: function (roundtable) {
-      this.$router.push(roundtable.id + "/experts")
+      this.$router.replace('roundtables/' + roundtable.id + "/experts")
     },
     deleteRoundtable: async function (roundtable) {
       if (!confirm('Are you sure you want to delete "' + roundtable.name + '" ?')) {
@@ -74,11 +67,11 @@ export default {
       console.log(roundtable.id)
       var col = await db
         .collection("users")
-        .doc(this.$store.state.currentUser.uid)
+        .doc(this.userId)
         .collection("roundtables")
         .doc(roundtable.id).get()
       await col.ref.delete()
-      this.$router.push('/admin/roundtable/list')
+      this.$router.push('/admin/roundtables')
     }
   }
 }

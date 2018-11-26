@@ -1,6 +1,5 @@
 <template>
   <div>
-    <admin-header></admin-header>
     <b-form @submit="onSubmit">
       <b-form-group id="nameInputGroup" label="Name:" label-for="nameInput" description="Enter a name for this roundtable event">
         <b-form-input id="nameInput1" type="text" v-model="form.name" required placeholder="">
@@ -15,23 +14,16 @@
         </b-form-input>
       </b-form-group>
       <b-btn class="btn btn-sm btn-primary" type="submit" variant="primary">Save</b-btn>
-      <b-btn class="btn btn-sm btn-outline-primary" @click="$router.push('/admin/roundtable/list')" variant="primary">Cancel</b-btn>
+      <b-btn class="btn btn-sm btn-outline-primary" @click="$router.push('/admin/roundtables')" variant="primary">Cancel</b-btn>
     </b-form>
-    <admin-footer></admin-footer>
   </div>
 
 </template>
 
 <script>
 import { db, firebase } from "@/firebaseConfig.js"
-import AdminHeader from '../AdminHeader'
-import AdminFooter from '../AdminFooter'
 export default {
   name: "RoundTableEdit",
-  components: {
-    AdminHeader,
-    AdminFooter
-  },
   data: function() {
     return {
       form: {

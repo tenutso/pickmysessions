@@ -11,9 +11,14 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import VueFire from 'vuefire'
 import { store } from './store'
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.min.css'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 Vue.use(BootstrapVue);
 Vue.use(VueFire)
+Vue.use(Vuetify)
+
 Vue.config.productionTip = false
 
 let currentUser = null
@@ -42,6 +47,8 @@ new Vue({
   el: '#app',
   router,
   store,
-  components: { App },
+  components: { 
+    App: { template: '<div><router-view></router-view></div>'}
+  },
   template: '<App/>'
 })
