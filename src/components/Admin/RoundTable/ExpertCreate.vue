@@ -20,6 +20,18 @@
       <b-form-group id="descInputGroup" label="Description:" label-for="descInput" description="Enter a description for this session">
         <b-form-textarea id="descInput" :rows="5" :cols="4" v-model="form.desc" required placeholder=""></b-form-textarea>
       </b-form-group>
+       <b-form-group id="imageInputGroup" label="Upload Image:" label-for="imageInput" description="Upload an image">
+         <div class="input-group">
+            <span class="input-group-btn">
+                <span class="btn btn-default btn-file">
+                    Browse… <input type="file" id="imgInp">
+                </span>
+            </span>
+            <input type="text" class="form-control" readonly>
+        </div>
+        <img id='img-upload'/>
+
+      </b-form-group>
       <b-form-group label="Included in rounds:">
         <b-form-checkbox-group v-model="form.rounds">
           <div v-for="r in roundtable.rounds" v-bind:key="r">
