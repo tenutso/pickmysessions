@@ -32,6 +32,7 @@
 
 <script>
 import { db, firebase } from '@/firebaseConfig.js'
+import { isUndefined } from 'util';
 export default {
   name: 'SignIn',
   data: function() {
@@ -45,23 +46,31 @@ export default {
   beforeCreate: function() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        alert('You are already logged in')
-        this.$router.push('/admin')
+        // alert('You are already logged in')
+        // this.$router.push('/admin')
         // console.log(user)
       }
     })
   },
   methods: {
-    onSubmit: function (evt) {
+    onSubmit: async function (evt) {
       evt.preventDefault()
-      firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password).catch(function(error) {
-      // Handle Errors here.
-      console.log(error)
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      alert(errorMessage)
-      // ...
-      });
+      try {
+        const user = await firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password)
+        this.$store.state.currentUser = user.user
+        // this.$router.go({path: this.$router.path})
+        if (!isUndefined(this.$route.query.redirect)) {
+          this.$router.replace(this.$route.query.redirect)
+        } else {
+          this.$router.replace('/admin')
+        }
+      } catch (error) {
+        // Handle Errors here.
+        console.log(error)
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        alert(errorMessage)
+      }
     }
   }
 }

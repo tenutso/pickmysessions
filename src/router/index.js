@@ -6,6 +6,9 @@ import SignIn from '@/components/SignIn'
 import RoundTableCreate from '@/components/Admin/RoundTable/RoundTableCreate'
 import RoundTableEdit from '@/components/Admin/RoundTable/RoundTableEdit'
 import RoundTableList from '@/components/Admin/RoundTable/RoundTableList'
+import ExpertCreate from '@/components/Admin/RoundTable/ExpertCreate'
+import ExpertList from '@/components/Admin/RoundTable/ExpertList'
+import ExpertEdit from '@/components/Admin/RoundTable/ExpertEdit'
 
 Vue.use(Router)
 
@@ -23,7 +26,7 @@ export default new Router({
     },
     {
       path: '/admin',
-      components: AdminIndex,
+      component: AdminIndex,
       name: 'AdminIndex',
       meta: {
         requiresAuth: true
@@ -32,7 +35,7 @@ export default new Router({
     {
       path: '/admin/roundtable/create',
       name: 'RoundTableCreate',
-      components: RoundTableCreate,
+      component: RoundTableCreate,
       meta: {
         requiresAuth: true
       }
@@ -40,7 +43,7 @@ export default new Router({
     {
       path: '/admin/roundtable/edit/:id',
       name: 'RoundTableEdit',
-      components: RoundTableEdit,
+      component: RoundTableEdit,
       meta: {
         requiresAuth: true
       }
@@ -48,7 +51,33 @@ export default new Router({
     {
       path: '/admin/roundtable/list',
       name: 'RoundTableList',
-      components: RoundTableList,
+      component: RoundTableList,
+      meta: {
+        requiresAuth: true
+      }
+    },
+
+    // Manage Experts
+    {
+      path: '/admin/roundtable/:id/experts/create',
+      name: 'ExpertCreate',
+      component: ExpertCreate,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/admin/roundtable/:rid/experts/edit/:eid',
+      name: 'ExpertEdit',
+      component: ExpertEdit,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/admin/roundtable/:id/experts',
+      name: 'ExpertList',
+      component: ExpertList,
       meta: {
         requiresAuth: true
       }

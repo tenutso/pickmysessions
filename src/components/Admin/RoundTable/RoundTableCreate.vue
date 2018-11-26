@@ -1,5 +1,6 @@
 <template>
   <div>
+    <admin-header></admin-header>
     <b-form @submit="onSubmit">
       <b-form-group
         id="nameInputGroup"
@@ -22,13 +23,20 @@
         variant="primary"
       >Cancel</b-btn>
     </b-form>
+    <admin-footer></admin-footer>
   </div>
 </template>
 
 <script>
 import { db, firebase } from "@/firebaseConfig.js"
+import AdminHeader from '../AdminHeader'
+import AdminFooter from '../AdminFooter'
 export default {
   name: "RoundTableCreate",
+  components: {
+    AdminHeader,
+    AdminFooter
+  },
   data: function() {
     return {
       form: {
@@ -43,9 +51,9 @@ export default {
       evt.preventDefault();
       const user = firebase.auth().currentUser;
       await db
-        .collection("roundtables")
-        .doc('users')
-        .collection(user.uid)
+        .collection("users")
+        .doc(user.uid)
+        .collection('roundtables')
         .add({
           userId: user.uid,
           name: this.form.name,

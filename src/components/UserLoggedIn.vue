@@ -2,8 +2,8 @@
 <div>
   <div v-if="user">
     <div class="text-right">
-    <img :src="user.photoURL" alt="avatar" style="width: 30px; height: 30px; border-radius: 50%;">
-    <b-btn @click="signOut">Sign Out</b-btn>
+    <img v-if="user.photoURL" :src="user.photoURL" alt="avatar" style="width: 30px; height: 30px; border-radius: 50%;">
+    <b-btn class="btn btn-sm" @click="signOut">Sign Out</b-btn>
     </div>
   </div>
 </div>
@@ -30,7 +30,8 @@ export default {
     signOut: async function () {
       await firebase.auth().signOut()
       this.user = null
-      this.$router.push('/admin/sign-in')
+      this.$store.state.currentUser = ''
+      this.$router.replace('/admin/sign-in')
     }
   }
 }

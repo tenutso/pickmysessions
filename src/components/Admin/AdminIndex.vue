@@ -1,5 +1,8 @@
 <template>
+  <div>
     <admin-header></admin-header>
+    <admin-footer></admin-footer>
+  </div>
 </template>
 
 <script>

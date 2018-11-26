@@ -1,5 +1,6 @@
 <template>
-    <header class="row">
+    <header class="">
+
         <nav class="navbar navbar-expand-md navbar-light">
             <a class="navbar-brand" href="/">SEAT PICKER</a>
             <div class="collapse navbar-collapse">
@@ -11,10 +12,20 @@
                         <a class="nav-link" href="/#/admin/roundtable/list">RoundTables</a>
                     </li>
                 </ul>
+                <user-logged-in></user-logged-in>
             </div>
         </nav>
     </header>
 </template>
+<script>
+import UserLoggedIn from '@/components/UserLoggedIn'
+export default {
+  components: {
+    UserLoggedIn
+  }
+}
+</script>
+
 
 <style>
 header {
