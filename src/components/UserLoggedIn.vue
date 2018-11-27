@@ -1,12 +1,8 @@
 <template>
-<div>
   <div v-if="user">
-    <div class="text-right">
-    <img v-if="user.photoURL" :src="user.photoURL" alt="avatar" style="width: 30px; height: 30px; border-radius: 50%;">
+    <v-img v-if="user.photoURL" :src="user.photoURL" alt="avatar" style="width: 30px; height: 30px; border-radius: 50%;"></v-img>
     <b-btn class="btn btn-sm" @click="signOut">Sign Out</b-btn>
-    </div>
   </div>
-</div>
 </template>
 
 <script>

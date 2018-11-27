@@ -31,12 +31,14 @@
       ></v-toolbar-side-icon>
       <v-toolbar-title>SeatSelect</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-tool-bar-items class="hidden-xs-only">
+      <v-toolbar-items class="hidden-xs-only">
         <v-btn flat>
           <v-icon left>people</v-icon>
           Roundtables
         </v-btn>
-      </v-tool-bar-items>
+      </v-toolbar-items>
+      <v-spacer></v-spacer>
+      <UserLoggedIn></UserLoggedIn>
     </v-toolbar>
     <v-content>
       <v-container fluid>
@@ -48,13 +50,11 @@
 </template>
 
 <script>
-import AdminHeader from "./AdminHeader";
-import AdminFooter from "./AdminFooter";
+import UserLoggedIn from "../UserLoggedIn";
 export default {
   name: "Admin",
   components: {
-    AdminHeader,
-    AdminFooter
+    UserLoggedIn
   },
   data() {
     return {
