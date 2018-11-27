@@ -1,33 +1,30 @@
 <template>
-<div id="signIn" class="container">
-    <b-form class= "form-signin" @submit="onSubmit">
-      <div class="text-center mb-4">
-        <img class="mb-4" src="" alt="" width="72" height="72">
-        <h1 class="h3 mb-3 font-weight-normal">Floating labels</h1>
-        <p>Build form controls with floating labels via the <code>:placeholder-shown</code> pseudo-element. <a href="https://caniuse.com/#feat=css-placeholder-shown">Works in latest Chrome, Safari, and Firefox.</a></p>
-      </div>
-      <b-form-group id="inputEmailGroup"
-                    label="Email address"
-                    label-for="inputEmail">
-        <b-form-input id="inputEmail"
-                      type="text"
-                      v-model="form.email"
-                      placeholder="Email Address">
-        </b-form-input>
-      </b-form-group>
-      <b-form-group id="inputPasswordGroup"
-                    label="Password"
-                    label-for="inputPassword">
-        <b-form-input id="inputPassword"
-                      type="password"
-                      v-model="form.password"
-                      placeholder="Password">
-        </b-form-input>
-      </b-form-group>
-      <b-button class="btn btn-lg btn-primary btn-block" type="submit" variant="primary">Sign in</b-button>
-      <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p>
-    </b-form>
-  </div>
+  <v-app id="inspire">
+    <v-content>
+      <v-container fluid fill-height>
+        <v-layout align-center justify-center>
+          <v-flex xs12 sm8 md4>
+            <v-card class="elevation-12">
+              <v-toolbar dark color="primary">
+                <v-toolbar-title>Login form</v-toolbar-title>
+                <v-spacer></v-spacer>
+              </v-toolbar>
+              <v-card-text>
+                <v-form>
+                  <v-text-field prepend-icon="person" name="login" label="Email" type="email"></v-text-field>
+                  <v-text-field id="password" prepend-icon="lock" name="password" label="Password" type="password"></v-text-field>
+                </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary">Login</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
@@ -37,11 +34,15 @@ export default {
   name: 'SignIn',
   data: function() {
     return {
+      drawer: null,
       form: {
         email: '',
         password: ''
       }
     }
+  },
+  props: {
+      source: String
   },
   beforeCreate: function() {
     firebase.auth().onAuthStateChanged((user) => {

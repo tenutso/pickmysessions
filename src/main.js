@@ -14,6 +14,7 @@ import { store } from './store'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import './stylus/main.styl'
 
 Vue.use(BootstrapVue);
 Vue.use(VueFire)
@@ -47,7 +48,7 @@ new Vue({
   el: '#app',
   router,
   store,
-  components: { 
+  components: {
     App: { template: '<div><router-view></router-view></div>'}
   },
   template: '<App/>'
