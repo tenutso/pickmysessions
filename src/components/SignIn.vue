@@ -11,13 +11,13 @@
               </v-toolbar>
               <v-card-text>
                 <v-form>
-                  <v-text-field prepend-icon="person" name="login" label="Email" type="email"></v-text-field>
-                  <v-text-field id="password" prepend-icon="lock" name="password" label="Password" type="password"></v-text-field>
+                  <v-text-field v-model="email" prepend-icon="person" label="Email" type="email"></v-text-field>
+                  <v-text-field v-model="password" id="password" prepend-icon="lock" label="Password" type="password"></v-text-field>
                 </v-form>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary">Login</v-btn>
+                <v-btn @click="onSubmit" color="primary">Login</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -34,11 +34,10 @@ export default {
   name: 'SignIn',
   data: function() {
     return {
+      valid: false,
       drawer: null,
-      form: {
-        email: '',
-        password: ''
-      }
+      email: '',
+      password: ''
     }
   },
   props: {
@@ -48,17 +47,18 @@ export default {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // alert('You are already logged in')
-        // this.$router.push('/admin')
-        // console.log(user)
+        //this.$router.push('/admin')
+        //console.log(user)
       }
     })
   },
   methods: {
     onSubmit: async function (evt) {
+      console.log(this.password)
       evt.preventDefault()
       try {
-        const user = await firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password)
-        this.$store.state.currentUser = user.user
+        const user = await firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+        // this.$store.state.currentUser = user.user
         // this.$router.go({path: this.$router.path})
         if (!isUndefined(this.$route.query.redirect)) {
           this.$router.replace(this.$route.query.redirect)

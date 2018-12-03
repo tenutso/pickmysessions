@@ -1,7 +1,7 @@
 <template>
   <div v-if="user">
     <v-img v-if="user.photoURL" :src="user.photoURL" alt="avatar" style="width: 30px; height: 30px; border-radius: 50%;"></v-img>
-    <b-btn class="btn btn-sm" @click="signOut">Sign Out</b-btn>
+    <v-btn class="secondary" @click="signOut">Sign Out</v-btn>
   </div>
 </template>
 

@@ -2,9 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import AdminIndex from '@/components/Admin/AdminIndex'
+import AdminHome from '@/components/Admin/AdminHome'
 import SignIn from '@/components/SignIn'
-import RoundTableCreate from '@/components/Admin/RoundTable/RoundTableCreate'
-import RoundTableEdit from '@/components/Admin/RoundTable/RoundTableEdit'
 import RoundTableList from '@/components/Admin/RoundTable/RoundTableList'
 import ExpertCreate from '@/components/Admin/RoundTable/ExpertCreate'
 import ExpertList from '@/components/Admin/RoundTable/ExpertList'
@@ -33,6 +32,14 @@ export default new Router({
       },
       children: [
         {
+          path: '/',
+          name: 'AdminHome',
+          component: AdminHome,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
           path: 'roundtables',
           name: 'RoundTableList',
           component: RoundTableList,
@@ -41,23 +48,7 @@ export default new Router({
           }
         },
         {
-          path: 'roundtables/edit/:id',
-          name: 'RoundTableEdit',
-          component: RoundTableEdit,
-          meta: {
-            requiresAuth: true
-          }
-        },
-        {
-          path: 'roundtables/create',
-          name: 'RoundTableCreate',
-          component: RoundTableCreate,
-          meta: {
-            requiresAuth: true
-          }
-        },
-        {
-          path: 'roundtables/:id/experts',
+          path: 'roundtables/experts',
           name: 'ExpertList',
           component: ExpertList,
           meta: {
