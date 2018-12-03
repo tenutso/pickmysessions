@@ -43,8 +43,8 @@
                     >
                 </v-flex>
                 <v-flex xs12 sm12 md12>
-                  <img v-if="!imageUrl" :src="expertItem.image" height="150" />
-                  <img v-if="imageUrl" :src="imageUrl" height="150" />
+                  <img v-if="expertItem.image" :src="expertItem.image" height="150" />
+                  <img v-else-if="imageUrl" :src="imageUrl" height="150" />
                 </v-flex>
             </v-layout>
           </v-container>
@@ -128,6 +128,12 @@ export default {
         .collection("experts")
     };
   },
+  watch: {
+    imageUrl: function(newValue, oldValue) {
+      // If a new image file is picked, show the new image before saving
+      this.$set(this.expertItem, 'image', '')
+    }
+  },
   methods: {
     editExpert: function (expert) {
       this.expertItem = Object.assign({}, expert)
@@ -171,7 +177,8 @@ export default {
             lastname: this.expertItem.lastname,
             suffix: this.expertItem.suffix,
             title: this.expertItem.title,
-            desc: this.expertItem.desc
+            desc: this.expertItem.desc,
+            image: this.expertItem.image
           });
       } else {
           const newExpert = await expertRef
@@ -189,16 +196,16 @@ export default {
       // Upload image if new or changed
       if (this.image) {
         const ext = this.image.name.slice(this.image.name.lastIndexOf('.'))
-        const fileData = await firebase.storage().ref(this.userId +
-          '/' + 'roundtables/' +
+        const fileData = await firebase.storage().ref(
+          this.userId +
+          '/roundtables/' +
           '/' + this.roundtableId +
           '/' + expertId +
           '.' + ext).put(this.image)
 
-          console.log(fileData)
-          let imageUrl = await fileData.ref.getDownloadURL()
-          await expertRef.doc(expertId).update({image: imageUrl})
-          this.image = { }
+          let downloadUrl = await fileData.ref.getDownloadURL()
+          await expertRef.doc(expertId).update({image: downloadUrl})
+          this.image = {}
       }
 
       this.dialog = false
@@ -218,7 +225,7 @@ export default {
       const files = event.target.files
       let filename = files[0].name
       console.log(files)
-      if (filename.lastIndexOf('.') <= 0) {
+      if (!/\.(gif|jpg|jpeg|png|webp)$/i.test(filename)) {
         return alert('Please add a valid file!')
       }
       const fileReader = new FileReader()
