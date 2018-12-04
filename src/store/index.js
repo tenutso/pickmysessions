@@ -1,30 +1,38 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import firebase from 'firebase/app'
+import { firebase, db } from '../firebaseConfig'
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
     user: null,
-    currentRoundtable: {}
+    selectedRoundtable: null,
+    roundtableRef: null
   },
   mutations: {
-    SET_USER(state, user) {
-      state.user = user
+    selectedRoundtable(state, payload) {
+      state.selectedRoundtable = payload
     },
-    setRoundtable(state, roundtable) {
-      state.currentRoundtable = roundtable
+    SET_USER(state, payload) {
+      state.user = payload
+    },
+    SET_ROUNDTABLE(state, payload) {
+      state.roundtableRef = payload
     }
   },
   getters: {
-
+    userState: state => {
+      
+      return state.user
+    }
   },
   actions: {
     init ({commit, state}) {
       firebase.auth().onAuthStateChanged(user => {
         if (user) {
           commit('SET_USER', user)
+          console.log('init', user)
         }
         else {
           commit('SET_USER', null)
@@ -40,6 +48,13 @@ export const store = new Vuex.Store({
           console.log(error)
           state.error = error
       }
+    },
+    initFirestore({commit, state}) {
+      const ref = db
+      .collection("users")
+      .doc(state.user.uid)
+      .collection("roundtables")
+      commit('SET_ROUNDTABLE', ref)
     }
   }
 })

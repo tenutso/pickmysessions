@@ -82,13 +82,13 @@ export default {
     };
   },
   firestore: function () {
-    this.userId = firebase.auth().currentUser.uid;
+    
     return {
-      roundtables: db
-        .collection("users")
-        .doc(this.userId)
-        .collection("roundtables")
-    };
+      roundtables: this.$store.state.roundtableRef
+    }
+  },
+  created() {
+    
   },
   methods: {
     editRoundtable: function (roundtable) {
@@ -99,7 +99,7 @@ export default {
       this.dialog = true;
     },
     listExperts: function (roundtable) {
-      this.$store.commit('setRoundtable', {id: roundtable.id, data: roundtable})
+      this.$store.commit('selectedRoundtable', {id: roundtable.id, data: roundtable})
       this.$router.replace("roundtables/experts");
     },
     deleteRoundtable: async function (roundtable) {
