@@ -57,7 +57,8 @@ export default {
       console.log(this.password)
       evt.preventDefault()
       try {
-        const user = await firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+        const user = await this.$store.dispatch('login', {email: this.email, password: this.password})
+        // const user = await firebase.auth().signInWithEmailAndPassword(this.email, this.password)
         // this.$store.state.currentUser = user.user
         // this.$router.go({path: this.$router.path})
         if (!isUndefined(this.$route.query.redirect)) {

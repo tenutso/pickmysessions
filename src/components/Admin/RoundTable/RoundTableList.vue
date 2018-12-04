@@ -99,7 +99,7 @@ export default {
       this.dialog = true;
     },
     listExperts: function (roundtable) {
-      this.$store.currentRoundtable = roundtable
+      this.$store.commit('setRoundtable', {id: roundtable.id, data: roundtable})
       this.$router.replace("roundtables/experts");
     },
     deleteRoundtable: async function (roundtable) {

@@ -1,7 +1,7 @@
 <template>
 <div>
   <v-toolbar flat color="white">
-    <v-toolbar-title>{{ $store.currentRoundtable.name }}</v-toolbar-title>
+    <v-toolbar-title>{{ $store.state.currentRoundtable.data.name }}</v-toolbar-title>
     <v-divider class="mx-2" inset vertical></v-divider>
     <v-spacer></v-spacer>
     <v-dialog persistent full-width v-model="dialog">
@@ -117,8 +117,9 @@ export default {
     };
   },
   firestore: function () {
-    this.userId = firebase.auth().currentUser.uid
-    this.roundtableId = this.$store.currentRoundtable.id
+    this.userId = this.$store.state.user.uid
+    // this.userId = firebase.auth().currentUser.uid
+    this.roundtableId = this.$store.state.currentRoundtable.id
     return {
       experts: db
         .collection("users")
