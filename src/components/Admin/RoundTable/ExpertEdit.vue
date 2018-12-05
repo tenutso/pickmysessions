@@ -1,5 +1,5 @@
 <template>
-    <v-dialog persistent full-width v-model="dialog">
+    <v-dialog persistent full-width v-model="$store.state.expertEditMode">
       <v-card>
         <v-card-title>
           <span class="headline">{{ formTitle }}</span>
@@ -57,11 +57,13 @@
 export default {
   name: "ExpertEdit",
   props: {
-    editMode: null,
+    editMode: {
+      type: Boolean,
+      default: false
+    }
   },
   data: function () {
     return {
-      dialog: false,
       formTitle: 'Edit Expert',
       expertItem: this.$store.state.selectedExpert,
       expertDefault: {},
@@ -70,7 +72,7 @@ export default {
     }
   },
   mounted () {
-    this.dialog = this.editMode
+    // this.dialog = this.editMode
     this.expertItem = this.$store.state.selectedExpert
   },
   watch: {
@@ -106,7 +108,7 @@ export default {
       this.dialog = false
     },
     close: function () {
-      this.dialog = false
+      this.$store.state.expertEditMode = true
       this.imageUrl = ''
       this.image = ''
       setTimeout(() => {

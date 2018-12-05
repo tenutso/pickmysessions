@@ -9,9 +9,13 @@ export const store = new Vuex.Store({
     user: null,
     selectedRoundtable: null,
     selectedExpert: null,
-    roundtableRef: null
+    roundtableRef: null,
+    expertEditMode: null
   },
   mutations: {
+    setExpertEditMode(state, payload) {
+      state.expertEditMode = payload
+    },
     setSelectedRoundtable(state, payload) {
       state.selectedRoundtable = payload
     },
@@ -50,12 +54,18 @@ export const store = new Vuex.Store({
     },
     async uploadImage({state}, payload) {
       const ext = payload.name.slice(payload.name.lastIndexOf('.'))
-      return await firebase.storage().ref(
+      fileData = firebase.storage().ref(
         state.user.uid +
         '/roundtables/' +
         '/' + state.selectedRoundtable.id +
         '/' + state.selectedExpert.id +
         '.' + ext).put(payload)
+      const imageUrl = await fileData.ref.getDownloadUrl()
+      state.roundtableRef
+      .doc(state.selectedRoundtable.id)
+      .collection('experts')
+      .doc(state.selectedExpert.id)
+      .update({image: imageUrl})
     }
   }
 })

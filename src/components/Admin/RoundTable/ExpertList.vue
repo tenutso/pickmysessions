@@ -5,13 +5,13 @@
     <v-divider class="mx-2" inset vertical></v-divider>
     <v-spacer></v-spacer>
     <expert-create></expert-create>
-    <expert-edit :v-bind="editMode"></expert-edit>
+    <expert-edit></expert-edit>
   </v-toolbar>
   <v-data-table :headers="headers" :items="experts" class="elevation-1">
     <template slot="items" slot-scope="props">
       <td>{{ props.item.firstname }} {{ props.item.lastname }}</td>
       <td class="justify-center layout px-0">
-        <v-icon small class="mr-2" @click="editMode = true && editExpert(props.item)">
+        <v-icon small class="mr-2" @click="editExpert(props.item)">
           edit
         </v-icon>
         <v-icon small @click="deleteExpert(props.item)">
@@ -85,7 +85,7 @@ export default {
       this.$store.commit('setSelectedExpert', Object.assign({id: expert.id}, expert))
       this.expertItem = Object.assign({}, expert)
       this.expertItem.id = expert.id
-      this.editMode = true;
+      this.$store.state.expertEditMode = true
     },
     deleteExpert: async function (expert) {
       if (

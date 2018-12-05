@@ -104,7 +104,7 @@ export default {
           });
           expertId = newExpert.id
 
-
+      this.$store.commit('setSelectedExperted', newExpert)
       // Upload image if new or changed
       if (this.image) {
         this.$store.dispatch('uploadImage', this.image)
