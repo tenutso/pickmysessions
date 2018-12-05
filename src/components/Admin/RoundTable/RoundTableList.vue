@@ -50,10 +50,6 @@
 </template>
 
 <script>
-import {
-  db,
-  firebase
-} from "@/firebaseConfig.js";
 export default {
   name: "RoundTableList",
   data: function () {
@@ -82,13 +78,9 @@ export default {
     };
   },
   firestore: function () {
-    
     return {
       roundtables: this.$store.state.roundtableRef
     }
-  },
-  created() {
-    
   },
   methods: {
     editRoundtable: function (roundtable) {
@@ -99,7 +91,7 @@ export default {
       this.dialog = true;
     },
     listExperts: function (roundtable) {
-      this.$store.commit('selectedRoundtable', {id: roundtable.id, data: roundtable})
+      this.$store.commit('setSelectedRoundtable', Object.assign({ id: roundtable.id }, roundtable))
       this.$router.replace("roundtables/experts");
     },
     deleteRoundtable: async function (roundtable) {
@@ -108,23 +100,14 @@ export default {
       ) {
         return;
       }
-      var col = await db
-        .collection("users")
-        .doc(this.userId)
-        .collection("roundtables")
+      var col = await this.$store.state.roundtableRef
         .doc(roundtable.id)
         .get();
       await col.ref.delete();
-      // this.$router.push("/admin/roundtables");
     },
     save: async function (evt) {
-      const user = firebase.auth().currentUser;
-
       if (this.roundtableItem.id) {
-        await db
-          .collection("users")
-          .doc(user.uid)
-          .collection("roundtables")
+        await this.$store.roundtableRef
           .doc(this.roundtableItem.id)
           .set({
             name: this.roundtableItem.name,
@@ -132,17 +115,13 @@ export default {
             seats: this.roundtableItem.seats
           });
       } else {
-        await db
-          .collection("users")
-          .doc(user.uid)
-          .collection("roundtables")
+        await this.$store.state.roundtableRef
           .add({
             name: this.roundtableItem.name,
             rounds: this.roundtableItem.rounds,
             seats: this.roundtableItem.seats
           });
       }
-
       this.dialog = false
     },
     close: function () {

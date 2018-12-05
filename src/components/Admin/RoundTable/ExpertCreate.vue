@@ -1,116 +1,147 @@
 <template>
-  <div>
-    <admin-header></admin-header>
-    <b-form @submit="onSubmit">
-      <b-form-group id="prefixInputGroup" label="Prefix:" label-for="prefixInput" description="">
-        <b-form-input id="prefixInput" type="text" v-model="form.prefix" placeholder=""></b-form-input>
-      </b-form-group>
-      <b-form-group id="firstNameInputGroup" label="First Name:" label-for="firstNameInput" description="">
-        <b-form-input id="firstNameInput" type="text" v-model="form.firstname" required placeholder=""></b-form-input>
-      </b-form-group>
-      <b-form-group id="lastNameInputGroup" label="Last Name:" label-for="lastNameInput" description="">
-        <b-form-input id="lastNameInput" type="text" v-model="form.lastname" required placeholder=""></b-form-input>
-      </b-form-group>
-      <b-form-group id="suffixInputGroup" label="Suffix:" label-for="suffixInput" description="">
-        <b-form-input id="suffixInput" type="text" v-model="form.suffix" placeholder=""></b-form-input>
-      </b-form-group>
-      <b-form-group id="titleInputGroup" label="Presentation Title:" label-for="titleInput" description="">
-        <b-form-input id="titleInput" type="text" v-model="form.title" required placeholder=""></b-form-input>
-      </b-form-group>
-      <b-form-group id="descInputGroup" label="Description:" label-for="descInput" description="Enter a description for this session">
-        <b-form-textarea id="descInput" :rows="5" :cols="4" v-model="form.desc" required placeholder=""></b-form-textarea>
-      </b-form-group>
-       <b-form-group id="imageInputGroup" label="Upload Image:" label-for="imageInput" description="Upload an image">
-         <div class="input-group">
-            <span class="input-group-btn">
-                <span class="btn btn-default btn-file">
-                    Browse… <input type="file" id="imgInp">
-                </span>
-            </span>
-            <input type="text" class="form-control" readonly>
-        </div>
-        <img id='img-upload'/>
+    <v-dialog persistent full-width v-model="dialog">
+      <v-btn slot="activator" color="primary" dark class="mb-2">New Item</v-btn>
+      <v-card>
+        <v-card-title>
+          <span class="headline">{{ formTitle }}</span>
+        </v-card-title>
 
-      </b-form-group>
-      <b-form-group label="Included in rounds:">
-        <b-form-checkbox-group v-model="form.rounds">
-          <div v-for="r in roundtable.rounds" v-bind:key="r">
-            <b-form-checkbox :checked=true :value="r">Round: {{ r }}</b-form-checkbox>
-          </div>
-        </b-form-checkbox-group>
-      </b-form-group>
+        <v-card-text>
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <v-flex xs4 sm4 md4>
+                <v-text-field v-model="expertItem.prefix" label="Prefix"></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-text-field v-model="expertItem.firstname" label="First Name"></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-text-field v-model="expertItem.lastname" label="Last Name"></v-text-field>
+              </v-flex>
+              <v-flex xs4 sm4 md4>
+                <v-text-field v-model="expertItem.suffix" label="Suffix"></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-text-field v-model="expertItem.title" label="Title"></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-textarea v-model="expertItem.desc" label="Description"></v-textarea>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-btn raised class="primary" @click="onPickFile">Upload Photo</v-btn>
+                <input
+                      type="file"
+                      style="display: none"
+                      ref="fileInput"
+                      accept="image/*"
+                      @change="onFilePicked"
+                    >
+                </v-flex>
+                <v-flex xs12 sm12 md12>
+                  <img v-if="expertItem.image" :src="expertItem.image" height="150" />
+                  <img v-else-if="imageUrl" :src="imageUrl" height="150" />
+                </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
 
-      <b-btn class="btn btn-sm btn-primary" type="submit" variant="primary">Save</b-btn>
-      <b-btn class="btn btn-sm btn-outline-primary" @click="$router.push('/admin/roundtable/list')" variant="primary">Cancel</b-btn>
-    </b-form>
-    <admin-footer></admin-footer>
-  </div>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
+          <v-btn color="blue darken-1" flat @click="save">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 </template>
 
 <script>
-import { db, firebase } from "@/firebaseConfig.js";
-import AdminHeader from "../AdminHeader";
-import AdminFooter from "../AdminFooter";
+
 export default {
-  name: "ExpertCreate",
-  components: {
-    AdminHeader,
-    AdminFooter
-  },
-  data: function() {
+  name: "CreateExpert",
+  data: function () {
     return {
-      form: {
+      dialog: false,
+      formTitle: 'Expert',
+      experts: [],
+      expertItem: {
         prefix: '',
         firstname: '',
         lastname: '',
         suffix: '',
         title: '',
         desc: '',
-        rounds: ''
-       },
-      currentUser: '',
-      roundtable: {}
-    };
+        image: ''
+      },
+      expertDefault: {},
+      userId: "",
+      roundtableId: "",
+      imageUrl: '',
+      image: null,
+    }
   },
-  firestore: function() {
-    this.currentUser = firebase.auth().currentUser
-    console.log('User', this.currentUser)
-    return {
-      roundtable: db
-        .collection("users")
-        .doc(this.currentUser.uid)
-        .collection("roundtables")
-        .doc(this.$route.params.id)
+  watch: {
+    imageUrl: function(newValue, oldValue) {
+      // If a new image file is picked, show the new image before saving
+      this.$set(this.expertItem, 'image', '')
     }
   },
   methods: {
-    onSubmit: async function(evt) {
-      evt.preventDefault();
-      const user = firebase.auth().currentUser
+    save: async function (evt) {
 
-      var rounds = { }
-      this.form.rounds.forEach(item => {
-        rounds[item] = this.roundtable.seats
+      let expertId = ''
+      const expertRef = this.$store.state.roundtableRef
+          .doc(this.$store.state.selectedRoundtable.id)
+          .collection('experts')
+
+          const newExpert = await expertRef
+          .add({
+            suffix: this.expertItem.suffix,
+            firstname: this.expertItem.firstname,
+            lastname: this.expertItem.lastname,
+            suffix: this.expertItem.suffix,
+            title: this.expertItem.title,
+            desc: this.expertItem.desc
+          });
+          expertId = newExpert.id
+
+
+      // Upload image if new or changed
+      if (this.image) {
+        this.$store.dispatch('uploadImage', this.image)
+        this.image = {}
+      }
+
+      this.dialog = false
+    },
+    close: function () {
+      this.dialog = false
+      this.imageUrl = ''
+      this.image = ''
+      setTimeout(() => {
+        this.expertItem = Object.assign({}, this.expertDefault)
+      }, 300)
+    },
+    onPickFile(event) {
+      this.$refs.fileInput.click()
+    },
+    onFilePicked(event) {
+      const files = event.target.files
+      let filename = files[0].name
+      console.log(files)
+      if (!/\.(gif|jpg|jpeg|png|webp)$/i.test(filename)) {
+        return alert('Please add a valid file!')
+      }
+      const fileReader = new FileReader()
+      fileReader.addEventListener('load', () => {
+        this.imageUrl = fileReader.result
       })
-
-      await db
-        .collection("users")
-        .doc(user.uid)
-        .collection("roundtables")
-        .doc(this.$route.params.id)
-        .collection('experts')
-        .add({
-            prefix: this.form.prefix,
-            firstname: this.form.firstname,
-            lastname: this.form.lastname,
-            suffix: this.form.suffix,
-            title: this.form.title,
-            desc: this.form.desc,
-            rounds: rounds
-        });
-
-      // this.$router.push("/admin/roundtable/list");
+      fileReader.readAsDataURL(files[0])
+      this.image = files[0]
     }
   }
 };
 </script>
+
+<style>
+</style>
+

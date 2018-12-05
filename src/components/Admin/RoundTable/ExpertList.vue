@@ -1,68 +1,17 @@
 <template>
 <div>
   <v-toolbar flat color="white">
-    <v-toolbar-title>{{ $store.state.currentRoundtable.data.name }}</v-toolbar-title>
+    <v-toolbar-title>{{ $store.state.selectedRoundtable.name }}</v-toolbar-title>
     <v-divider class="mx-2" inset vertical></v-divider>
     <v-spacer></v-spacer>
-    <v-dialog persistent full-width v-model="dialog">
-      <v-btn slot="activator" color="primary" dark class="mb-2">New Item</v-btn>
-      <v-card>
-        <v-card-title>
-          <span class="headline">{{ formTitle }}</span>
-        </v-card-title>
-
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex xs4 sm4 md4>
-                <v-text-field v-model="expertItem.prefix" label="Prefix"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-text-field v-model="expertItem.firstname" label="First Name"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-text-field v-model="expertItem.lastname" label="Last Name"></v-text-field>
-              </v-flex>
-              <v-flex xs4 sm4 md4>
-                <v-text-field v-model="expertItem.suffix" label="Suffix"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-text-field v-model="expertItem.title" label="Title"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-textarea v-model="expertItem.desc" label="Description"></v-textarea>
-              </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-btn raised class="primary" @click="onPickFile">Upload Photo</v-btn>
-                <input
-                      type="file"
-                      style="display: none"
-                      ref="fileInput"
-                      accept="image/*"
-                      @change="onFilePicked"
-                    >
-                </v-flex>
-                <v-flex xs12 sm12 md12>
-                  <img v-if="expertItem.image" :src="expertItem.image" height="150" />
-                  <img v-else-if="imageUrl" :src="imageUrl" height="150" />
-                </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
-          <v-btn color="blue darken-1" flat @click="save">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <expert-create></expert-create>
+    <expert-edit :v-bind="editMode"></expert-edit>
   </v-toolbar>
   <v-data-table :headers="headers" :items="experts" class="elevation-1">
     <template slot="items" slot-scope="props">
       <td>{{ props.item.firstname }} {{ props.item.lastname }}</td>
       <td class="justify-center layout px-0">
-        <v-icon small class="mr-2" @click="editExpert(props.item)">
+        <v-icon small class="mr-2" @click="editMode = true && editExpert(props.item)">
           edit
         </v-icon>
         <v-icon small @click="deleteExpert(props.item)">
@@ -75,16 +24,18 @@
 </template>
 
 <script>
-import {
-  db,
-  firebase
-} from "@/firebaseConfig.js";
-
+import ExpertCreate from '@/components/Admin/RoundTable/ExpertCreate'
+import ExpertEdit from '@/components/Admin/RoundTable/ExpertEdit'
 export default {
   name: "ExpertList",
+  components: {
+    ExpertCreate,
+    ExpertEdit
+  },
   data: function () {
     return {
       dialog: false,
+      editMode: false,
       formTitle: 'Expert',
       experts: [],
       expertItem: {
@@ -117,15 +68,9 @@ export default {
     };
   },
   firestore: function () {
-    this.userId = this.$store.state.user.uid
-    // this.userId = firebase.auth().currentUser.uid
-    this.roundtableId = this.$store.state.currentRoundtable.id
     return {
-      experts: db
-        .collection("users")
-        .doc(this.userId)
-        .collection("roundtables")
-        .doc(this.roundtableId)
+      experts: this.$store.state.roundtableRef
+        .doc(this.$store.state.selectedRoundtable.id)
         .collection("experts")
     };
   },
@@ -137,9 +82,10 @@ export default {
   },
   methods: {
     editExpert: function (expert) {
+      this.$store.commit('setSelectedExpert', Object.assign({id: expert.id}, expert))
       this.expertItem = Object.assign({}, expert)
       this.expertItem.id = expert.id
-      this.dialog = true;
+      this.editMode = true;
     },
     deleteExpert: async function (expert) {
       if (
@@ -148,11 +94,8 @@ export default {
         return;
       }
 
-      var col = await db
-        .collection("users")
-        .doc(this.userId)
-        .collection("roundtables")
-        .doc(this.roundtableId)
+      var col = await this.$store.state.roundtableRef
+        .doc(this.$store.state.selectedRoundtable.id)
         .collection("experts")
         .doc(expert.id)
         .get();
@@ -161,11 +104,8 @@ export default {
     save: async function (evt) {
 
       let expertId = ''
-      const expertRef = db
-          .collection("users")
-          .doc(this.userId)
-          .collection("roundtables")
-          .doc(this.roundtableId)
+      const expertRef = this.$store.state.roundtableRef
+          .doc(this.$store.state.selectedRoundtable.id)
           .collection('experts')
 
       if (this.expertItem.id) {
@@ -196,17 +136,8 @@ export default {
 
       // Upload image if new or changed
       if (this.image) {
-        const ext = this.image.name.slice(this.image.name.lastIndexOf('.'))
-        const fileData = await firebase.storage().ref(
-          this.userId +
-          '/roundtables/' +
-          '/' + this.roundtableId +
-          '/' + expertId +
-          '.' + ext).put(this.image)
-
-          let downloadUrl = await fileData.ref.getDownloadURL()
-          await expertRef.doc(expertId).update({image: downloadUrl})
-          this.image = {}
+        this.$store.dispatch('uploadImage', this.image)
+        this.image = {}
       }
 
       this.dialog = false

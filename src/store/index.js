@@ -8,11 +8,15 @@ export const store = new Vuex.Store({
   state: {
     user: null,
     selectedRoundtable: null,
+    selectedExpert: null,
     roundtableRef: null
   },
   mutations: {
-    selectedRoundtable(state, payload) {
+    setSelectedRoundtable(state, payload) {
       state.selectedRoundtable = payload
+    },
+    setSelectedExpert(state, payload) {
+      state.selectedExpert = payload
     },
     SET_USER(state, payload) {
       state.user = payload
@@ -22,28 +26,16 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
-    userState: state => {
-      
-      return state.user
+    selectedRoundtable: state => {
+      return state.selectedRoundtable
     }
   },
   actions: {
-    init ({commit, state}) {
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          commit('SET_USER', user)
-          console.log('init', user)
-        }
-        else {
-          commit('SET_USER', null)
-        }
-      })
-    },
-    async login({dispatch, state}, credentials) {
+    async login({commit, state}, credentials) {
       try {
-        await dispatch('init')
-        const result = await firebase.auth().signInWithEmailAndPassword(credentials.email, credentials.password)
-        console.log('Performed Login: ', result)
+        const user = await firebase.auth().signInWithEmailAndPassword(credentials.email, credentials.password)
+        commit('SET_USER', user)
+        console.log('Login Page: ', user)
       } catch (error) {
           console.log(error)
           state.error = error
@@ -55,6 +47,15 @@ export const store = new Vuex.Store({
       .doc(state.user.uid)
       .collection("roundtables")
       commit('SET_ROUNDTABLE', ref)
+    },
+    async uploadImage({state}, payload) {
+      const ext = payload.name.slice(payload.name.lastIndexOf('.'))
+      return await firebase.storage().ref(
+        state.user.uid +
+        '/roundtables/' +
+        '/' + state.selectedRoundtable.id +
+        '/' + state.selectedExpert.id +
+        '.' + ext).put(payload)
     }
   }
 })

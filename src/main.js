@@ -21,47 +21,42 @@ Vue.use(VueFire)
 Vue.use(Vuetify)
 
 Vue.config.productionTip = false
-/*
+
 let currentUser = ''
 firebase.auth().onAuthStateChanged(async (user) => {
   if (user) {
-    await store.dispatch('init')
-    await store.dispatch('initFirestore')
     currentUser = user
+    store.commit('SET_USER', currentUser)
+    store.dispatch('initFirestore')
   }
-})
-*/
+  router.beforeEach((to, from, next) => {
+    console.log('inituser', currentUser)
+    const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+    if (requiresAuth && !currentUser) {
+      console.log("Not logged in", currentUser);
+      next({
+        path: '/admin/sign-in',
+        query: {
+          redirect: to.fullPath
+        }
+      })
 
-store.dispatch('init')
-  .then(() => { 
-    console.log('next initfirestore', store.state.user)
-    store.dispatch('initFirestore', ) 
+    } else {
+      next()
+    }
   })
-  .then(() => {
-    router.beforeEach((to, from, next) => {
-      console.log('inituser', store.state.user)
-      const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-      if (requiresAuth && !store.state.user) {
-        console.log("Not logged in", store.state.user);
-        next({
-          path: '/admin/sign-in',
-          query: {
-            redirect: to.fullPath
-          }
-        })
-    
-      } else {
-        next()
-      }
-    })
-    
-    new Vue({
-      el: '#app',
-      router,
-      store,
-      components: {
-        App: { template: '<div><router-view></router-view></div>'}
-      },
-      template: '<App/>'
-    })
+  new Vue({
+    el: '#app',
+    router,
+    store,
+    components: {
+      App: { template: '<div><router-view></router-view></div>'}
+    },
+    template: '<App/>'
   })
+})
+
+
+
+
+
