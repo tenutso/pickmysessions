@@ -48,7 +48,7 @@ export default new Router({
           }
         },
         {
-          path: 'roundtables/experts',
+          path: 'roundtables/:id/experts',
           name: 'ExpertList',
           component: ExpertList,
           meta: {
@@ -56,24 +56,6 @@ export default new Router({
           }
         }
       ]
-    },
-
-    // Manage Experts
-    {
-      path: '/admin/roundtable/:id/experts/create',
-      name: 'ExpertCreate',
-      component: ExpertCreate,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/admin/roundtable/:rid/experts/edit/:eid',
-      name: 'ExpertEdit',
-      component: ExpertEdit,
-      meta: {
-        requiresAuth: true
-      }
     }
   ]
 })

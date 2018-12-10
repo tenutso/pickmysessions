@@ -1,11 +1,15 @@
 <template>
 <div>
   <v-toolbar flat color="white">
-    <v-toolbar-title>{{ $store.state.selectedRoundtable.name }}</v-toolbar-title>
+    <v-toolbar-title>{{ selectedRoundtable.name }}</v-toolbar-title>
     <v-divider class="mx-2" inset vertical></v-divider>
     <v-spacer></v-spacer>
     <expert-create></expert-create>
-    <expert-edit></expert-edit>
+    <expert-edit
+      v-if="selectedExpert"
+      :selectedExpert="selectedExpert"
+      :selectedRoundtable="selectedRoundtable"
+      ></expert-edit>
   </v-toolbar>
   <v-data-table :headers="headers" :items="experts" class="elevation-1">
     <template slot="items" slot-scope="props">
@@ -19,6 +23,7 @@
         </v-icon>
       </td>
     </template>
+
   </v-data-table>
 </div>
 </template>
@@ -37,6 +42,8 @@ export default {
       dialog: false,
       editMode: false,
       formTitle: 'Expert',
+      selectedRoundtable: '',
+      selectedExpert: '',
       experts: [],
       expertItem: {
         prefix: '',
@@ -69,10 +76,12 @@ export default {
   },
   firestore: function () {
     return {
+      selectedRoundtable: this.$store.state.roundtableRef
+        .doc(this.$route.params.id),
       experts: this.$store.state.roundtableRef
-        .doc(this.$store.state.selectedRoundtable.id)
+        .doc(this.$route.params.id)
         .collection("experts")
-    };
+    }
   },
   watch: {
     imageUrl: function(newValue, oldValue) {
@@ -82,7 +91,7 @@ export default {
   },
   methods: {
     editExpert: function (expert) {
-      this.$store.commit('setSelectedExpert', Object.assign({id: expert.id}, expert))
+      this.selectedExpert = Object.assign({id: expert.id}, expert)
       this.expertItem = Object.assign({}, expert)
       this.expertItem.id = expert.id
       this.$store.state.expertEditMode = true

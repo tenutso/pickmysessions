@@ -1,30 +1,29 @@
 <template>
-    <v-dialog persistent full-width v-model="$store.state.expertEditMode">
+    <v-dialog persistent width="600px" v-model="this.$store.state.expertEditMode">
       <v-card>
         <v-card-title>
           <span class="headline">{{ formTitle }}</span>
         </v-card-title>
-
         <v-card-text>
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs4 sm4 md4>
-                <v-text-field v-model="expertItem.prefix" label="Prefix"></v-text-field>
+                <v-text-field v-model="expert.prefix" label="Prefix"></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md12>
-                <v-text-field v-model="expertItem.firstname" label="First Name"></v-text-field>
+                <v-text-field v-model="expert.firstname" label="First Name"></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md12>
-                <v-text-field v-model="expertItem.lastname" label="Last Name"></v-text-field>
-              </v-flex>
-              <v-flex xs4 sm4 md4>
-                <v-text-field v-model="expertItem.suffix" label="Suffix"></v-text-field>
+                <v-text-field v-model="expert.lastname" label="Last Name"></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md12>
-                <v-text-field v-model="expertItem.title" label="Title"></v-text-field>
+                <v-text-field v-model="expert.suffix" label="Suffix"></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md12>
-                <v-textarea v-model="expertItem.desc" label="Description"></v-textarea>
+                <v-text-field v-model="expert.title" label="Title"></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-textarea v-model="expert.desc" label="Description"></v-textarea>
               </v-flex>
               <v-flex xs12 sm12 md12>
                 <v-btn raised class="primary" @click="onPickFile">Upload Photo</v-btn>
@@ -37,13 +36,12 @@
                     >
                 </v-flex>
                 <v-flex xs12 sm12 md12>
-                  <img v-if="expertItem.image" :src="expertItem.image" height="150" />
+                  <img v-if="expert.image" :src="expert.image" height="150" />
                   <img v-else-if="imageUrl" :src="imageUrl" height="150" />
                 </v-flex>
             </v-layout>
           </v-container>
         </v-card-text>
-
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
@@ -57,62 +55,65 @@
 export default {
   name: "ExpertEdit",
   props: {
-    editMode: {
-      type: Boolean,
-      default: false
-    }
+    selectedExpert: null,
+    selectedRoundtable: null
   },
   data: function () {
     return {
       formTitle: 'Edit Expert',
-      expertItem: this.$store.state.selectedExpert,
       expertDefault: {},
       imageUrl: '',
       image: null,
     }
   },
-  mounted () {
-    // this.dialog = this.editMode
-    this.expertItem = this.$store.state.selectedExpert
+  computed: {
+    expert: function () {
+      return this.selectedExpert
+    },
+    roundtable: function () {
+      return this.selectedRoundtable
+    }
   },
   watch: {
-    imageUrl: function(newValue, oldValue) {
-      // If a new image file is picked, show the new image before saving
-      this.$set(this.expertItem, 'image', '')
+    image: function (oldval, newval) {
+      this.expert.image = this.imageUrl
     }
   },
   methods: {
     save: async function (evt) {
       let expertId = ''
       const expertRef = this.$store.state.roundtableRef
-          .doc(this.$store.state.selectedRoundtable.id)
+          .doc(this.roundtable.id)
           .collection('experts')
-      expertId = this.expertItem.id
       await expertRef
-        .doc(expertId)
+        .doc(this.expert.id)
         .set({
-          suffix: this.expertItem.suffix,
-          firstname: this.expertItem.firstname,
-          lastname: this.expertItem.lastname,
-          suffix: this.expertItem.suffix,
-          title: this.expertItem.title,
-          desc: this.expertItem.desc,
-          image: this.expertItem.image
+          suffix: this.expert.suffix,
+          firstname: this.expert.firstname,
+          lastname: this.expert.lastname,
+          suffix: this.expert.suffix,
+          title: this.expert.title,
+          desc: this.expert.desc,
+          image: this.expert.image
         });
 
       // Upload image if new or changed
       if (this.image) {
-        this.$store.dispatch('uploadImage', this.image)
+        this.$store.dispatch('uploadImage', {
+          image: this.image,
+          roundtableId: this.roundtable.id,
+          expertId: this.expert.id
+        })
         this.image = {}
       }
-      this.dialog = false
+      this.$store.state.expertEditMode = false
     },
     close: function () {
-      this.$store.state.expertEditMode = true
+      this.$store.state.expertEditMode = false
       this.imageUrl = ''
       this.image = ''
       setTimeout(() => {
-        this.expertItem = Object.assign({}, this.expertDefault)
+        // this.expertItem = Object.assign({}, this.expertDefault)
       }, 300)
     },
     onPickFile(event) {

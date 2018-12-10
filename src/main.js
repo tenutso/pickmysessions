@@ -27,10 +27,9 @@ firebase.auth().onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user
     store.commit('SET_USER', currentUser)
-    store.dispatch('initFirestore')
   }
   router.beforeEach((to, from, next) => {
-    console.log('inituser', currentUser)
+    console.log('beforeEach', currentUser)
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
     if (requiresAuth && !currentUser) {
       console.log("Not logged in", currentUser);

@@ -43,6 +43,7 @@
         <v-icon small class="mr-2" @click="editRoundtable(data.item)">edit</v-icon>
         <v-icon small class="mr-2" @click="listExperts(data.item)">people</v-icon></router-link>
         <v-icon small class="mr-2" @click="deleteRoundtable(data.item)">delete</v-icon>
+        <v-icon small class="mr-2" @click="deleteRoundtable(data.item)">link</v-icon>
       </td>
     </template>
   </v-data-table>
@@ -92,7 +93,7 @@ export default {
     },
     listExperts: function (roundtable) {
       this.$store.commit('setSelectedRoundtable', Object.assign({ id: roundtable.id }, roundtable))
-      this.$router.replace("roundtables/experts");
+      this.$router.replace("roundtables/" + roundtable.id + "/experts");
     },
     deleteRoundtable: async function (roundtable) {
       if (
@@ -100,14 +101,14 @@ export default {
       ) {
         return;
       }
-      var col = await this.$store.state.roundtableRef
+      var col = await this.$store.getters.roundtableRef
         .doc(roundtable.id)
         .get();
       await col.ref.delete();
     },
     save: async function (evt) {
       if (this.roundtableItem.id) {
-        await this.$store.roundtableRef
+        await this.$store.getters.roundtableRef
           .doc(this.roundtableItem.id)
           .set({
             name: this.roundtableItem.name,
@@ -115,7 +116,7 @@ export default {
             seats: this.roundtableItem.seats
           });
       } else {
-        await this.$store.state.roundtableRef
+        await this.$store.getters.roundtableRef
           .add({
             name: this.roundtableItem.name,
             rounds: this.roundtableItem.rounds,

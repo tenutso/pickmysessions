@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+
 import { firebase, db } from '../firebaseConfig'
 
 Vue.use(Vuex)
@@ -7,64 +8,56 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     user: null,
-    selectedRoundtable: null,
-    selectedExpert: null,
+    expertEditMode: null,
     roundtableRef: null,
-    expertEditMode: null
+    cart: [],
+    cartCount: 0
   },
   mutations: {
+    addToCart(state, payload) {
+      state.cart.push(payload)
+      state.cartCount = state.cart.length
+    },
     setExpertEditMode(state, payload) {
       state.expertEditMode = payload
     },
-    setSelectedRoundtable(state, payload) {
-      state.selectedRoundtable = payload
-    },
-    setSelectedExpert(state, payload) {
-      state.selectedExpert = payload
-    },
     SET_USER(state, payload) {
       state.user = payload
-    },
-    SET_ROUNDTABLE(state, payload) {
-      state.roundtableRef = payload
+      console.log('SET_USER Says: ', payload)
+      state.roundtableRef = db
+      .collection("users")
+      .doc(payload.uid)
+      .collection("roundtables")
     }
   },
   getters: {
-    selectedRoundtable: state => {
-      return state.selectedRoundtable
+    roundtable:  (state) => async (id) => {
+      const snapshot = await state.roundtableRef.doc(id).get()
+      return snapshot.docs.map(doc => doc.data())
     }
   },
   actions: {
     async login({commit, state}, credentials) {
       try {
         const user = await firebase.auth().signInWithEmailAndPassword(credentials.email, credentials.password)
-        commit('SET_USER', user)
-        console.log('Login Page: ', user)
       } catch (error) {
           console.log(error)
           state.error = error
       }
     },
-    initFirestore({commit, state}) {
-      const ref = db
-      .collection("users")
-      .doc(state.user.uid)
-      .collection("roundtables")
-      commit('SET_ROUNDTABLE', ref)
-    },
     async uploadImage({state}, payload) {
-      const ext = payload.name.slice(payload.name.lastIndexOf('.'))
-      fileData = firebase.storage().ref(
+      const ext = payload.image.name.slice(payload.image.name.lastIndexOf('.'))
+      let fileData = await firebase.storage().ref(
         state.user.uid +
         '/roundtables/' +
-        '/' + state.selectedRoundtable.id +
-        '/' + state.selectedExpert.id +
-        '.' + ext).put(payload)
-      const imageUrl = await fileData.ref.getDownloadUrl()
+        '/' + payload.roundtableId +
+        '/' + payload.expertId +
+        '.' + ext).put(payload.image)
+      const imageUrl = await fileData.ref.getDownloadURL()
       state.roundtableRef
-      .doc(state.selectedRoundtable.id)
+      .doc(payload.roundtableId)
       .collection('experts')
-      .doc(state.selectedExpert.id)
+      .doc(payload.expertId)
       .update({image: imageUrl})
     }
   }

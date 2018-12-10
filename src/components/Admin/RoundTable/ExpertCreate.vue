@@ -10,22 +10,22 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs4 sm4 md4>
-                <v-text-field v-model="expertItem.prefix" label="Prefix"></v-text-field>
+                <v-text-field v-model="expert.prefix" label="Prefix"></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md12>
-                <v-text-field v-model="expertItem.firstname" label="First Name"></v-text-field>
+                <v-text-field v-model="expert.firstname" label="First Name"></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md12>
-                <v-text-field v-model="expertItem.lastname" label="Last Name"></v-text-field>
+                <v-text-field v-model="expert.lastname" label="Last Name"></v-text-field>
               </v-flex>
               <v-flex xs4 sm4 md4>
-                <v-text-field v-model="expertItem.suffix" label="Suffix"></v-text-field>
+                <v-text-field v-model="expert.suffix" label="Suffix"></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md12>
-                <v-text-field v-model="expertItem.title" label="Title"></v-text-field>
+                <v-text-field v-model="expert.title" label="Title"></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md12>
-                <v-textarea v-model="expertItem.desc" label="Description"></v-textarea>
+                <v-textarea v-model="expert.desc" label="Description"></v-textarea>
               </v-flex>
               <v-flex xs12 sm12 md12>
                 <v-btn raised class="primary" @click="onPickFile">Upload Photo</v-btn>
@@ -38,7 +38,7 @@
                     >
                 </v-flex>
                 <v-flex xs12 sm12 md12>
-                  <img v-if="expertItem.image" :src="expertItem.image" height="150" />
+                  <img v-if="expert.image" :src="expert.image" height="150" />
                   <img v-else-if="imageUrl" :src="imageUrl" height="150" />
                 </v-flex>
             </v-layout>
@@ -63,7 +63,7 @@ export default {
       dialog: false,
       formTitle: 'Expert',
       experts: [],
-      expertItem: {
+      expert: {
         prefix: '',
         firstname: '',
         lastname: '',
@@ -82,7 +82,7 @@ export default {
   watch: {
     imageUrl: function(newValue, oldValue) {
       // If a new image file is picked, show the new image before saving
-      this.$set(this.expertItem, 'image', '')
+      this.$set(this.expert, 'image', '')
     }
   },
   methods: {
@@ -90,24 +90,27 @@ export default {
 
       let expertId = ''
       const expertRef = this.$store.state.roundtableRef
-          .doc(this.$store.state.selectedRoundtable.id)
+          .doc(this.$route.params.id)
           .collection('experts')
 
           const newExpert = await expertRef
           .add({
-            suffix: this.expertItem.suffix,
-            firstname: this.expertItem.firstname,
-            lastname: this.expertItem.lastname,
-            suffix: this.expertItem.suffix,
-            title: this.expertItem.title,
-            desc: this.expertItem.desc
+            suffix: this.expert.suffix,
+            firstname: this.expert.firstname,
+            lastname: this.expert.lastname,
+            suffix: this.expert.suffix,
+            title: this.expert.title,
+            desc: this.expert.desc
           });
           expertId = newExpert.id
 
-      this.$store.commit('setSelectedExperted', newExpert)
       // Upload image if new or changed
       if (this.image) {
-        this.$store.dispatch('uploadImage', this.image)
+        this.$store.dispatch('uploadImage', {
+          image: this.image,
+          roundtableId: this.$route.params.id,
+          expertId: expertId
+        })
         this.image = {}
       }
 
