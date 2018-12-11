@@ -1,8 +1,9 @@
 <template>
+<div data-app>
 <v-layout justify-center class="layout">
   <v-flex xs12 sm10 md6>
     <v-navigation-drawer v-model="drawer" absolute temporary right height="50%">
-        <v-list v-for="item in $store.state.cart" class="pa-1" :key="item.id">
+        <v-list v-for="item, index in $store.state.cart" class="pa-1" :key="index">
           <v-list-tile avatar>
             <v-list-tile-avatar>
               <img :src="item.image">
@@ -67,11 +68,11 @@
                       <div>
                         <div class="subtitle">{{ expert.title }}</div>
                         <span class="grey--text">1,000 miles of wonder</span>
-                        <div v-if="expert.selected">Selected</div>
+                        
                       </div>
                     </v-card-title>
                     <v-card-actions>
-                      <v-btn small  @click="selectExpert(expert)">Select</v-btn>
+                      <v-btn small  @click="selectExpert(expert, round)">Select</v-btn>
                       <v-spacer></v-spacer>
                       <v-btn icon @click="openDialog(expert)">
                         <v-icon>more</v-icon>
@@ -89,6 +90,7 @@
     </main>
   </v-flex>
 </v-layout>
+</div>
 </template>
 
 <script>
@@ -104,10 +106,29 @@ export default {
       roundtable: {},
       dialog: false,
       dialogInfo: {},
-      experts: []
+      experts: [],
+      selectedState: {}
+    }
+  },
+  firestore: function () {
+    return {
+      experts: db
+        .collection('users')
+        .doc('tBmMmpFJpCWJptMl4cy0BqMQteF3')
+        .collection('roundtables')
+        .doc('Rd2AR6w9cIfRYxBMANdi')
+        .collection('experts')
+        .orderBy('lastname', 'asc'),
+      roundtable: db
+        .collection('users')
+        .doc('tBmMmpFJpCWJptMl4cy0BqMQteF3')
+        .collection('roundtables')
+        .doc('Rd2AR6w9cIfRYxBMANdi')
     }
   },
   created: async function () {
+
+    /*
     // return this.$store.getters.roundtable('Rd2AR6w9cIfRYxBMANdi')
     const snapshot = await db
       .collection('users')
@@ -128,15 +149,22 @@ export default {
       .collection('roundtables')
       .doc('Rd2AR6w9cIfRYxBMANdi').get()
     this.roundtable = snapshot2.data()
+    */
   },
   methods: {
     openDialog(expert) {
       this.dialog = true
       this.dialogInfo = expert
     },
-    selectExpert(expert) {
-      expert.selected = { round: 1 }
-      this.$store.commit('addToCart', expert)
+    selectExpert(expert, round) {
+             
+      let cartItem = {}
+      cartItem = expert
+      cartItem.id = expert.id
+      this.$store.commit('addToCart', {[round]: cartItem})
+      
+      this.selectedState = { [round]: true }
+      
       const active = parseInt(this.active)
       this.active = (active < 2 ? active + 1 : 0)
     }

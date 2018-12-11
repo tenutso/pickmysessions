@@ -15,6 +15,8 @@ export const store = new Vuex.Store({
   },
   mutations: {
     addToCart(state, payload) {
+      let cart = payload
+      payload.id = payload.id
       state.cart.push(payload)
       state.cartCount = state.cart.length
     },
