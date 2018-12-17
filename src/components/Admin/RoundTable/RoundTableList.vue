@@ -41,7 +41,7 @@
       <td>{{ data.item.name }}</td>
       <td class="justify-center layout px-0">
         <v-icon small class="mr-2" @click="editRoundtable(data.item)">edit</v-icon>
-        <v-icon small class="mr-2" @click="listExperts(data.item)">people</v-icon></router-link>
+        <v-icon small class="mr-2" @click="listExperts(data.item)">people</v-icon>
         <v-icon small class="mr-2" @click="deleteRoundtable(data.item)">delete</v-icon>
         <v-icon small class="mr-2" @click="deleteRoundtable(data.item)">link</v-icon>
       </td>
@@ -80,7 +80,9 @@ export default {
   },
   firestore: function () {
     return {
-      roundtables: this.$store.state.roundtableRef
+      roundtables: this.$store.state
+        .clientRef
+        .collection('roundtables')
     }
   },
   methods: {

@@ -9,16 +9,18 @@ export const store = new Vuex.Store({
   state: {
     user: null,
     expertEditMode: null,
-    roundtableRef: null,
-    cart: [],
+    clientRef: null,
+    cart: {},
     cartCount: 0
   },
   mutations: {
     addToCart(state, payload) {
-      let cart = payload
-      payload.id = payload.id
-      state.cart.push(payload)
-      state.cartCount = state.cart.length
+      state.cart[payload.id] = payload
+      state.cartCount = Object.keys(state.cart).length
+    },
+    removeCartItem(state, payload) {
+      delete state.cart[payload]
+      state.cartCount = Object.keys(state.cart).length
     },
     setExpertEditMode(state, payload) {
       state.expertEditMode = payload
@@ -26,10 +28,9 @@ export const store = new Vuex.Store({
     SET_USER(state, payload) {
       state.user = payload
       console.log('SET_USER Says: ', payload)
-      state.roundtableRef = db
+      state.clientRef = db
       .collection("users")
       .doc(payload.uid)
-      .collection("roundtables")
     }
   },
   getters: {
@@ -46,6 +47,12 @@ export const store = new Vuex.Store({
           console.log(error)
           state.error = error
       }
+    },
+    async uploadFile({state}, payload) {
+      let fileData = await firebase.storage().ref(
+        state.user.uid + '/imports/' + payload.name).put(payload)
+      const fileUrl = await fileData.ref.getDownloadURL()
+      return fileUrl
     },
     async uploadImage({state}, payload) {
       const ext = payload.image.name.slice(payload.image.name.lastIndexOf('.'))

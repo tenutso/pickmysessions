@@ -36,12 +36,13 @@
         class="hidden-xs-only"
       >
         <v-btn
-          @click="$router.push({name: 'RoundTableList'})"
+          @click="$router.push({name: item.path})"
           flat
         >
           <v-icon left>{{ item.icon }}</v-icon>
           {{ item.title }}
         </v-btn>
+
       </v-toolbar-items>
       <v-spacer></v-spacer>
       <UserLoggedIn></UserLoggedIn>
@@ -66,9 +67,9 @@ export default {
     return {
       drawer: false,
       menuItems: [
-        { icon: "people", title: "Roundtables" },
-        { icon: "bar_chart", title: "Reports" },
-        { icon: "lock_open", title: "Login" }
+        { icon: "people", title: "Roundtables", path: "RoundTableList" },
+        { icon: "email", title: "Email Lists", path: "EmailList" },
+        { icon: "bar_chart", title: "Reports", path: "Reports" }
       ]
     };
   }

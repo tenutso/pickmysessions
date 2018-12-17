@@ -5,9 +5,10 @@ import AdminIndex from '@/components/Admin/AdminIndex'
 import AdminHome from '@/components/Admin/AdminHome'
 import SignIn from '@/components/SignIn'
 import RoundTableList from '@/components/Admin/RoundTable/RoundTableList'
-import ExpertCreate from '@/components/Admin/RoundTable/ExpertCreate'
 import ExpertList from '@/components/Admin/RoundTable/ExpertList'
-import ExpertEdit from '@/components/Admin/RoundTable/ExpertEdit'
+import EmailList from '@/components/Admin/EmailList/EmailList'
+import AddressList from '@/components/Admin/EmailList/AddressList'
+
 
 Vue.use(Router)
 
@@ -54,7 +55,23 @@ export default new Router({
           meta: {
             requiresAuth: true
           }
-        }
+        },
+        {
+          path: 'lists',
+          name: 'EmailList',
+          component: EmailList,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'lists/:id',
+          name: 'AddressList',
+          component: AddressList,
+          meta: {
+            requiresAuth: true
+          }
+        },
       ]
     }
   ]

@@ -21,6 +21,7 @@
         <v-icon small @click="deleteExpert(props.item)">
           delete
         </v-icon>
+
       </td>
     </template>
 
@@ -76,9 +77,13 @@ export default {
   },
   firestore: function () {
     return {
-      selectedRoundtable: this.$store.state.roundtableRef
+      selectedRoundtable: this.$store.state
+        .clientRef
+        .collection('roundtables')
         .doc(this.$route.params.id),
-      experts: this.$store.state.roundtableRef
+      experts: this.$store.state
+        .clientRef
+        .collection('roundtables')
         .doc(this.$route.params.id)
         .collection("experts")
     }
