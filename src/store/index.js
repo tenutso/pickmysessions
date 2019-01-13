@@ -11,9 +11,30 @@ export const store = new Vuex.Store({
     expertEditMode: null,
     clientRef: null,
     cart: {},
-    cartCount: 0
+    cartCount: 0,
+    loader: false,
+    token: null,
+    tokenInfo: null
   },
   mutations: {
+    setTokenInfo(state, payload) {
+
+      state.tokenInfo = payload
+    },
+    setToken(state, payload) {
+      let params =[]
+      payload.split('_', 3).map((key) => {
+        params.push(key)
+      })
+      state.token = {
+        userId: params[0],
+        roundtableId: params[1],
+        tokenId: params[2]
+      }
+    },
+    setLoader(state, payload) {
+      state.loader = payload
+    },
     addToCart(state, payload) {
       state.cart[payload.id] = payload
       state.cartCount = Object.keys(state.cart).length
@@ -63,7 +84,8 @@ export const store = new Vuex.Store({
         '/' + payload.expertId +
         '.' + ext).put(payload.image)
       const imageUrl = await fileData.ref.getDownloadURL()
-      state.roundtableRef
+      state.clientRef
+      .collection('roundtables')
       .doc(payload.roundtableId)
       .collection('experts')
       .doc(payload.expertId)

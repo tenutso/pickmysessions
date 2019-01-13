@@ -82,7 +82,8 @@ export default {
   methods: {
     save: async function (evt) {
       let expertId = ''
-      const expertRef = this.$store.state.roundtableRef
+      const expertRef = this.$store.state.clientRef
+          .collection('roundtables')
           .doc(this.roundtable.id)
           .collection('experts')
       await expertRef

@@ -49,7 +49,10 @@
     </v-toolbar>
     <v-content>
       <v-container fluid>
-        <router-view></router-view>
+        <div v-if="$store.state.loader" class="text-xs-center">
+          <v-progress-circular indeterminate color="primary"></v-progress-circular>
+        </div>
+      <router-view v-else></router-view>
       </v-container>
     </v-content>
     <v-footer app></v-footer>
@@ -68,10 +71,22 @@ export default {
       drawer: false,
       menuItems: [
         { icon: "people", title: "Roundtables", path: "RoundTableList" },
-        { icon: "email", title: "Email Lists", path: "EmailList" },
         { icon: "bar_chart", title: "Reports", path: "Reports" }
       ]
     };
-  }
+  },
+  beforeCreate: function () {
+    this.$store.commit('setLoader', true)
+  },
+  updated: function () {
+    let vm = this
+    this.$nextTick(function () {
+
+      setTimeout(function () {
+        vm.$store.commit('setLoader', false)
+      }, 1123)
+    })
+
+  },
 };
 </script>

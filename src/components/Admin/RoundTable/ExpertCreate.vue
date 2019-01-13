@@ -1,6 +1,6 @@
 <template>
-    <v-dialog persistent full-width v-model="dialog">
-      <v-btn slot="activator" color="primary" dark class="mb-2">New Item</v-btn>
+    <v-dialog persistent v-model="dialog">
+      <v-btn slot="activator" color="primary" dark class="mb-2">New Expert</v-btn>
       <v-card>
         <v-card-title>
           <span class="headline">{{ formTitle }}</span>
@@ -89,7 +89,8 @@ export default {
     save: async function (evt) {
 
       let expertId = ''
-      const expertRef = this.$store.state.roundtableRef
+      const expertRef = this.$store.state.clientRef
+          .collection('roundtables')
           .doc(this.$route.params.id)
           .collection('experts')
 
@@ -113,8 +114,9 @@ export default {
         })
         this.image = {}
       }
-
+      this.expert = null
       this.dialog = false
+
     },
     close: function () {
       this.dialog = false

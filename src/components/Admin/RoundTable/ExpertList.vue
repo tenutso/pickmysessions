@@ -1,31 +1,35 @@
 <template>
 <div>
-  <v-toolbar flat color="white">
-    <v-toolbar-title>{{ selectedRoundtable.name }}</v-toolbar-title>
-    <v-divider class="mx-2" inset vertical></v-divider>
-    <v-spacer></v-spacer>
-    <expert-create></expert-create>
-    <expert-edit
-      v-if="selectedExpert"
-      :selectedExpert="selectedExpert"
-      :selectedRoundtable="selectedRoundtable"
-      ></expert-edit>
-  </v-toolbar>
-  <v-data-table :headers="headers" :items="experts" class="elevation-1">
-    <template slot="items" slot-scope="props">
-      <td>{{ props.item.firstname }} {{ props.item.lastname }}</td>
-      <td class="justify-center layout px-0">
-        <v-icon small class="mr-2" @click="editExpert(props.item)">
-          edit
-        </v-icon>
-        <v-icon small @click="deleteExpert(props.item)">
-          delete
-        </v-icon>
+  <v-layout row>
+    <v-flex xs12 sm6 offset-sm3>
+      <v-card>
+        <v-toolbar flat color="white">
+          <v-toolbar-title>{{ selectedRoundtable.name }}</v-toolbar-title>
+          <v-divider class="mx-2" inset vertical></v-divider>
+          <v-spacer></v-spacer>
+          <expert-create></expert-create>
+          <expert-edit v-if="selectedExpert" :selectedExpert="selectedExpert" :selectedRoundtable="selectedRoundtable"></expert-edit>
+        </v-toolbar>
 
-      </td>
-    </template>
+        <v-data-table :headers="headers" :items="experts" class="elevation-1">
+          <template slot="items" slot-scope="props">
+            <td>{{ props.item.firstname }} {{ props.item.lastname }}</td>
+            <td class="justify-center layout px-0">
+              <v-icon small class="mr-2" @click="editExpert(props.item)">
+                edit
+              </v-icon>
 
-  </v-data-table>
+              <v-icon small @click="deleteExpert(props.item)">
+                delete
+              </v-icon>
+
+            </td>
+          </template>
+
+        </v-data-table>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </div>
 </template>
 
@@ -89,14 +93,16 @@ export default {
     }
   },
   watch: {
-    imageUrl: function(newValue, oldValue) {
+    imageUrl: function (newValue, oldValue) {
       // If a new image file is picked, show the new image before saving
       this.$set(this.expertItem, 'image', '')
     }
   },
   methods: {
     editExpert: function (expert) {
-      this.selectedExpert = Object.assign({id: expert.id}, expert)
+      this.selectedExpert = Object.assign({
+        id: expert.id
+      }, expert)
       this.expertItem = Object.assign({}, expert)
       this.expertItem.id = expert.id
       this.$store.state.expertEditMode = true
@@ -108,8 +114,10 @@ export default {
         return;
       }
 
-      var col = await this.$store.state.roundtableRef
-        .doc(this.$store.state.selectedRoundtable.id)
+      var col = await this.$store.state
+        .clientRef
+        .collection('roundtables')
+        .doc(this.$route.params.id)
         .collection("experts")
         .doc(expert.id)
         .get();
@@ -119,8 +127,8 @@ export default {
 
       let expertId = ''
       const expertRef = this.$store.state.roundtableRef
-          .doc(this.$store.state.selectedRoundtable.id)
-          .collection('experts')
+        .doc(this.$store.state.selectedRoundtable.id)
+        .collection('experts')
 
       if (this.expertItem.id) {
         expertId = this.expertItem.id
@@ -136,7 +144,7 @@ export default {
             image: this.expertItem.image
           });
       } else {
-          const newExpert = await expertRef
+        const newExpert = await expertRef
           .add({
             suffix: this.expertItem.suffix,
             firstname: this.expertItem.firstname,
@@ -145,7 +153,7 @@ export default {
             title: this.expertItem.title,
             desc: this.expertItem.desc
           });
-          expertId = newExpert.id
+        expertId = newExpert.id
       }
 
       // Upload image if new or changed
